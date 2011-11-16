@@ -3129,6 +3129,10 @@ void OMXCodec::onCmdComplete(OMX_COMMANDTYPE cmd, OMX_U32 data) {
 
         case OMX_CommandPortDisable:
         {
+            if(mState == ERROR) {
+              CODEC_LOGE("Ignoring OMX_CommandPortDisable in ERROR state");
+              break;
+            }
             OMX_U32 portIndex = data;
             CODEC_LOGV("PORT_DISABLED(%ld)", portIndex);
 
@@ -3172,6 +3176,11 @@ void OMXCodec::onCmdComplete(OMX_COMMANDTYPE cmd, OMX_U32 data) {
             OMX_U32 portIndex = data;
             CODEC_LOGV("PORT_ENABLED(%ld)", portIndex);
 
+            if(ERROR == mState) {
+              CODEC_LOGE("Ignoring port Enable since component is in ERROR state");
+              break;
+            }
+
             CHECK(mState == EXECUTING || mState == RECONFIGURING);
             CHECK_EQ((int)mPortStatus[portIndex], (int)ENABLING);
 
@@ -3210,6 +3219,11 @@ void OMXCodec::onCmdComplete(OMX_COMMANDTYPE cmd, OMX_U32 data) {
 #ifdef QCOM_HARDWARE
             }
 #endif
+
+            if(mState == ERROR) {
+              CODEC_LOGE("Ignoring OMX_CommandFlush in ERROR state");
+              break;
+            }
 
             if (mState == RECONFIGURING) {
                 CHECK_EQ(portIndex, (OMX_U32)kPortIndexOutput);
