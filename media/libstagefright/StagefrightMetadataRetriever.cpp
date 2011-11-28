@@ -363,11 +363,12 @@ VideoFrame *StagefrightMetadataRetriever::getFrameAtTime(
             mime);
     } else {
         frame = extractVideoFrameWithCodecFlags(
+                &mClient, trackMeta, source, OMXCodec::kSoftwareCodecsOnly,
 #else
     VideoFrame *frame =
         extractVideoFrameWithCodecFlags(
-#endif
                 &mClient, trackMeta, source, OMXCodec::kPreferSoftwareCodecs,
+#endif
                 timeUs, option);
 #ifdef QCOM_HARDWARE
     }
