@@ -242,6 +242,7 @@ static const CodecInfo kDecoderInfo[] = {
     { MEDIA_MIMETYPE_VIDEO_VPX, "OMX.google.vpx.decoder" },
     { MEDIA_MIMETYPE_VIDEO_MPEG2, "OMX.Nvidia.mpeg2v.decode" },
 #ifdef QCOM_HARDWARE
+    { MEDIA_MIMETYPE_VIDEO_MPEG2, "OMX.qcom.video.decoder.mpeg2" },
     { MEDIA_MIMETYPE_VIDEO_DIVX, "OMX.qcom.video.decoder.divx"},
     { MEDIA_MIMETYPE_VIDEO_DIVX311, "OMX.qcom.video.decoder.divx311"},
     { MEDIA_MIMETYPE_VIDEO_DIVX4, "OMX.qcom.video.decoder.divx4"},
@@ -1366,6 +1367,8 @@ void OMXCodec::setVideoInputFormat(
         compressionFormat= (OMX_VIDEO_CODINGTYPE)QOMX_VIDEO_CodingDivx;
     } else if (!strcasecmp(MEDIA_MIMETYPE_VIDEO_WMV, mime)){
         compressionFormat = OMX_VIDEO_CodingWMV;
+    } else if (!strcasecmp(MEDIA_MIMETYPE_CONTAINER_MPEG2, mime)){
+        compressionFormat = OMX_VIDEO_CodingMPEG2;
 #endif
     } else {
         LOGE("Not a supported video mime type: %s", mime);
@@ -1452,7 +1455,6 @@ void OMXCodec::setVideoInputFormat(
     switch (compressionFormat) {
         case OMX_VIDEO_CodingMPEG4:
         {
-            CHECK_EQ(setupMPEG4EncoderParameters(meta), (status_t)OK);
             break;
         }
 
@@ -1653,6 +1655,11 @@ status_t OMXCodec::setupH263EncoderParameters(const sp<MetaData>& meta) {
     CHECK_EQ(setupBitRate(bitRate), (status_t)OK);
     CHECK_EQ(setupErrorCorrectionParameters(), (status_t)OK);
 
+    return OK;
+}
+
+
+status_t OMXCodec::setupMPEG2EncoderParameters(const sp<MetaData>& meta) {
     return OK;
 }
 
