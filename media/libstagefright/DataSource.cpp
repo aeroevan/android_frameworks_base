@@ -32,6 +32,7 @@
 #else
 #include "include/AVIExtractor.h"
 #endif
+#include "include/WVMExtractor.h"
 
 #include "matroska/MatroskaExtractor.h"
 
@@ -124,6 +125,7 @@ void DataSource::RegisterDefaultSniffers() {
     RegisterSniffer(SniffMPEG2TS);
     RegisterSniffer(SniffMP3);
     RegisterSniffer(SniffAAC);
+    RegisterSniffer(SniffWVM);
 #ifndef QCOM_HARDWARE
     RegisterSniffer(SniffAVI);
 #endif
