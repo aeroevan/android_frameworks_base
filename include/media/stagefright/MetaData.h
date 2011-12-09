@@ -153,6 +153,9 @@ enum {
     // 3D Video Flag
     kKey3D                = '3Dvf',  // bool (int32_t)
     kKeyHFR               = 'hfr ',  // int32_t
+
+    //Extractor sets this
+    kKeyUseArbitraryMode  = 'ArbM'  //bool (int32_t)
 #endif
 };
 
@@ -168,11 +171,6 @@ enum {
     kTypeDivXVer_5,
     kTypeDivXVer_6,
 };
-enum {
-    kTypeWMVSimple,
-    kTypeWMVAdvance,
-};
-
 enum {
     kTypeWMA,
     kTypeWMAPro,

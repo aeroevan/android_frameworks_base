@@ -237,6 +237,7 @@ private:
     bool mIsMetaDataStoredInVideoBuffers;
     bool mOnlySubmitOneBufferAtOneTime;
     bool mInterlaceFormatDetected;
+    bool mSPSParsed;
 #endif
 
     // Used to record the decoding time for an output picture from
