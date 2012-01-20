@@ -3873,7 +3873,8 @@ bool OMXCodec::drainInputBuffer(BufferInfo *info) {
         return true;
     }
 
-    if (mPaused) {
+    if ((!strncmp(mComponentName, "OMX.qcom.", 9)) && mPaused) {
+        CODEC_LOGE("Returning as in Pause State and H/W decoder");
         return false;
     }
 
