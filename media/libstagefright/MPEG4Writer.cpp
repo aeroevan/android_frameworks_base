@@ -1314,9 +1314,17 @@ void MPEG4Writer::writeChunkToFile(Chunk* chunk) {
     while (!chunk->mSamples.empty()) {
         List<MediaBuffer *>::iterator it = chunk->mSamples.begin();
 
-        off64_t offset = chunk->mTrack->isAvc()
-                                ? addLengthPrefixedSample_l(*it)
-                                : addSample_l(*it);
+        sp<Track::AVCParamSet> seqEnhanceInfo = chunk->mTrack->mSeqEnhanceInfo;
+        off64_t chunk_offset = mOffset;
+
+        if (chunk->mTrack->isAvc() && seqEnhanceInfo != NULL) {
+            MediaBuffer *temp = new MediaBuffer(const_cast<uint8_t *>(seqEnhanceInfo->mData), seqEnhanceInfo->mLength);
+            addLengthPrefixedSample_l(temp);
+            temp->release();
+        }
+
+        chunk->mTrack->isAvc() ? addLengthPrefixedSample_l(*it)
+                              : addSample_l(*it);
 
         if (isFirstSample) {
             chunk->mTrack->addChunkOffset(offset);
