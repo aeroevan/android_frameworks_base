@@ -189,6 +189,7 @@ AwesomePlayer::AwesomePlayer()
       mTimeSource(NULL),
       mVideoRendererIsPreview(false),
       mAudioPlayer(NULL),
+      mAudioEOD(false),
       mDisplayWidth(0),
       mDisplayHeight(0),
       mFlags(0),
@@ -1612,6 +1613,7 @@ void AwesomePlayer::finishSeekIfNecessary(int64_t videoTimeUs) {
         // If we don't have a video time, seek audio to the originally
         // requested seek time instead.
 
+        mAudioEOD = false;
         mAudioPlayer->seekTo(videoTimeUs < 0 ? mSeekTimeUs : videoTimeUs);
         mWatchForAudioSeekComplete = true;
         mWatchForAudioEOS = true;
@@ -1791,7 +1793,7 @@ void AwesomePlayer::onVideoEvent() {
     }
 
     TimeSource *ts =
-        ((mFlags & AUDIO_AT_EOS) || !(mFlags & AUDIOPLAYER_STARTED))
+        ((mFlags & AUDIO_AT_EOS) || !(mFlags & AUDIOPLAYER_STARTED) || (mAudioEOD == true))
             ? &mSystemTimeSource : mTimeSource;
 
     if (mFlags & FIRST_FRAME) {
@@ -1809,7 +1811,8 @@ void AwesomePlayer::onVideoEvent() {
 
     int64_t realTimeUs, mediaTimeUs, nowUs = 0, latenessUs = 0;
     if (!(mFlags & AUDIO_AT_EOS) && mAudioPlayer != NULL
-        && mAudioPlayer->getMediaTimeMapping(&realTimeUs, &mediaTimeUs)) {
+        && mAudioPlayer->getMediaTimeMapping(&realTimeUs, &mediaTimeUs)
+        && (mAudioEOD == false)) {
         mTimeSourceDeltaUs = realTimeUs - mediaTimeUs;
     }
 
@@ -2367,6 +2370,7 @@ uint32_t AwesomePlayer::flags() const {
 }
 
 void AwesomePlayer::postAudioEOS(int64_t delayUs) {
+    mAudioEOD = true;
     postCheckAudioStatusEvent(delayUs);
 }
 
